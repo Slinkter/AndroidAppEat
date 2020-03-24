@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "419057439484",
+    "firebase_url": "https://projecteatapp-5ed15.firebaseio.com",
+    "project_id": "projecteatapp-5ed15",
+    "storage_bucket": "projecteatapp-5ed15.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419057439484:android:a1b2354bd84b35d7debd79",
+        "android_client_info": {
+          "package_name": "com.cudpast.myeatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "419057439484-7le7l6eqn7tm0vl9746dcfuhc88akagu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnqemhc0YS7pNVW-GHJZVA-fIXVxxuzW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "419057439484-7le7l6eqn7tm0vl9746dcfuhc88akagu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
