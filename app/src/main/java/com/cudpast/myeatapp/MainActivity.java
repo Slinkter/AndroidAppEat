@@ -1,6 +1,5 @@
 package com.cudpast.myeatapp;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,10 +77,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
-
-
     }
 
     private void init() {
@@ -99,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 phoneLogin();
             }
         };
-
-
     }
 
     private void checkUserFromFirebase(FirebaseUser user) {
@@ -182,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
                         setAvailableProviders(providers).
                         build(),
                 APP_REQUEST_CODE);
-
     }
 
 
