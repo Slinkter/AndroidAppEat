@@ -167,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToHomeActivity(UserModel userRef) {
         Common.currentUser = userRef;
+        startActivity(new Intent(MainActivity.this,HomeActivity.class));
+        finish();
     }
 
 
