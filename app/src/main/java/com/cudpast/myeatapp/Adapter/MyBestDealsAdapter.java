@@ -9,12 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.asksira.loopingviewpager.LoopingPagerAdapter;
+import com.bumptech.glide.Glide;
 import com.cudpast.myeatapp.Model.BestDealModel;
 import com.cudpast.myeatapp.R;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 public class MyBestDealsAdapter  extends LoopingPagerAdapter<BestDealModel> {
@@ -25,6 +28,8 @@ public class MyBestDealsAdapter  extends LoopingPagerAdapter<BestDealModel> {
     @BindView(R.id.txt_best_deal)
     TextView txt_best_deal;
 
+
+    Unbinder unbinder;
 
 
 
@@ -39,6 +44,9 @@ public class MyBestDealsAdapter  extends LoopingPagerAdapter<BestDealModel> {
 
     @Override
     protected void bindView(View convertView, int listPosition, int viewType) {
-
+        unbinder = ButterKnife.bind(this,convertView);
+        //set data
+        Glide.with(convertView).load(itemList.get(listPosition).getImage()).into(img_best_deal);
+        txt_best_deal.setText(itemList.get(listPosition).getName());
     }
 }
