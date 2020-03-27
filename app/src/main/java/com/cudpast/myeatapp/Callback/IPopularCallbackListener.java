@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IPopularCallbackListener {
 
-    void onPopularLoadSuccess(List<PopularCategoryModel> popularCategoryModels);
+    void onPopularLoadSuccess(List<PopularCategoryModel> listPopularCategoryModels);
     void onPopularLoadFailed(String message);
 
 }

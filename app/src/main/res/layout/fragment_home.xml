@@ -61,10 +61,6 @@
                 app:viewpagerAspectRatio="1.33">
 
             </com.asksira.loopingviewpager.LoopingViewPager>
-
-
         </LinearLayout>
-
-
     </LinearLayout>
 </RelativeLayout>

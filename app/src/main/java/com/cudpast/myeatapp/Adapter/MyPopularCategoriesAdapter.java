@@ -24,11 +24,11 @@ public class MyPopularCategoriesAdapter extends RecyclerView.Adapter<MyPopularCa
 
 
     Context context;
-    List<PopularCategoryModel> popularCategoryModelList;
+    List<PopularCategoryModel> list_PopularCategoryModel;
 
-    public MyPopularCategoriesAdapter(Context context, List<PopularCategoryModel> popularCategoryModelList) {
+    public MyPopularCategoriesAdapter(Context context, List<PopularCategoryModel> list_PopularCategoryModel) {
         this.context = context;
-        this.popularCategoryModelList = popularCategoryModelList;
+        this.list_PopularCategoryModel = list_PopularCategoryModel;
     }
 
     @NonNull
@@ -39,28 +39,28 @@ public class MyPopularCategoriesAdapter extends RecyclerView.Adapter<MyPopularCa
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Glide.with(context).load(popularCategoryModelList.get(position).getImage()).into(holder.category_image);
-        holder.txt_category_name.setText(popularCategoryModelList.get(position).getName());
+        Glide.with(context).load(list_PopularCategoryModel.get(position).getImage()).into(holder.category_image);
+        holder.txt_category_name.setText(list_PopularCategoryModel.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return popularCategoryModelList.size();
+        return list_PopularCategoryModel.size();
     }
-
+    // ------------------->
+    // Class aux
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        Unbinder unbinder;
+
 
         @BindView(R.id.txt_category_name)
         TextView txt_category_name;
-
         @BindView(R.id.category_image)
         CircleImageView category_image;
+        Unbinder unbinder;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             unbinder = ButterKnife.bind(this, itemView);
-
         }
 
     }
