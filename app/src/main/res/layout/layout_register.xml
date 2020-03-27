@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color"
+    android:background="@android:color/white"
     android:orientation="vertical"
     android:padding="8dp">
     
@@ -12,7 +12,7 @@
 
         <EditText
             android:id="@+id/edt_name"
-            android:hint="Your name "
+            android:hint="Ingresar tu nombre  "
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -25,7 +25,7 @@
 
         <EditText
             android:id="@+id/edt_address"
-            android:hint="Your address "
+            android:hint="Ingresar tu direccion "
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -40,7 +40,7 @@
         <EditText
             android:id="@+id/edt_phone"
             android:focusable="false"
-            android:hint="Your phone "
+            android:hint="Tu número de celular "
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

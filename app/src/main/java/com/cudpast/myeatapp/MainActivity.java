@@ -55,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference userRef;
     private List<AuthUI.IdpConfig> providers;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        init();
+    }
 
     @Override
     protected void onStart() {
@@ -64,33 +70,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-
         if (listener != null) {
             firebaseAuth.removeAuthStateListener(listener);
             compositeDisposable.clear();
         }
         super.onStop();
-
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        init();
-    }
 
     private void init() {
+        //
+        dialog = new SpotsDialog.Builder().setCancelable(false).setContext(this).build();
+        //
         providers = Arrays.asList(new AuthUI.IdpConfig.PhoneBuilder().build());
         userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCES);
         firebaseAuth = FirebaseAuth.getInstance();
-        dialog = new SpotsDialog.Builder().setCancelable(false).setContext(this).build();
+        //
         cloudFunctions = RetrofitCloudClient.getInstance().create(ICloudFunctions.class);
         listener = firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
                 checkUserFromFirebase(user);
-                Toast.makeText(MainActivity.this, "Already login", Toast.LENGTH_SHORT).show();
             } else {
                 phoneLogin();
             }
@@ -104,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Toast.makeText(MainActivity.this, "ya esta registrador", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Usuarios Registro", Toast.LENGTH_SHORT).show();
                             UserModel userModel = dataSnapshot.getValue(UserModel.class);
                             goToHomeActivity(userModel);
                         } else {
+                            Toast.makeText(MainActivity.this, "Usuario no Registrado", Toast.LENGTH_SHORT).show();
                             showRegisterDialog(user);
                         }
                         dialog.dismiss();
@@ -124,34 +125,38 @@ public class MainActivity extends AppCompatActivity {
 
     private void showRegisterDialog(FirebaseUser user) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+
         builder.setTitle("Registro");
-        builder.setMessage("");
+        builder.setMessage("Ingrese su datos");
         View itemView = LayoutInflater.from(this).inflate(R.layout.layout_register, null);
         EditText edt_name = itemView.findViewById(R.id.edt_name);
         EditText edt_address = itemView.findViewById(R.id.edt_address);
         EditText edt_phone = itemView.findViewById(R.id.edt_phone);
-
         // set
         edt_phone.setText(user.getPhoneNumber());
-
+        //
         builder.setView(itemView);
-        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> dialogInterface.dismiss());
-        builder.setPositiveButton("Register", (dialog, which) -> {
+        builder.setNegativeButton("Salir", (dialogInterface, i) -> dialogInterface.dismiss());
+        builder.setPositiveButton("Registrar", (dialog, which) -> {
             if (TextUtils.isEmpty(edt_name.getText().toString())) {
                 Toast.makeText(MainActivity.this, "Ingresar nombre", Toast.LENGTH_SHORT).show();
+                finish();
                 return;
             } else if (TextUtils.isEmpty(edt_address.getText().toString())) {
                 Toast.makeText(MainActivity.this, "ingresar direccion", Toast.LENGTH_SHORT).show();
+                finish();
                 return;
             }
 
             UserModel userModel = new UserModel();
             userModel.setUid(user.getUid());
-            userModel.setName(edt_name.getText().toString());
+            userModel.setName(edt_name.getText().toString() );
             userModel.setAddress(edt_address.getText().toString());
             userModel.setPhone(edt_phone.getText().toString());
 
-            userRef.child(user.getUid()).setValue(userModel)
+            userRef
+                    .child(user.getUid())
+                    .setValue(userModel)
                     .addOnCompleteListener(task -> {
                         dialog.dismiss();
                         Toast.makeText(MainActivity.this, "Existo", Toast.LENGTH_SHORT).show();
@@ -160,26 +165,19 @@ public class MainActivity extends AppCompatActivity {
 
         });
         builder.setView(itemView);
-
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.show();
     }
 
     private void goToHomeActivity(UserModel userRef) {
         Common.currentUser = userRef;
-        startActivity(new Intent(MainActivity.this,HomeActivity.class));
+        startActivity(new Intent(MainActivity.this, HomeActivity.class));
         finish();
     }
 
-
     private void phoneLogin() {
-        startActivityForResult(AuthUI.getInstance().
-                        createSignInIntentBuilder().
-                        setAvailableProviders(providers).
-                        build(),
-                APP_REQUEST_CODE);
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), APP_REQUEST_CODE);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
