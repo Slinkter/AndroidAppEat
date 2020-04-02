@@ -37,31 +37,32 @@ public class MenuFragment extends Fragment {
     Unbinder unbinder;
     @BindView(R.id.recycler_menu)
     RecyclerView recyclerView_menu;
+    //
     AlertDialog dialog;
     LayoutAnimationController layoutAnimationController;
     MyCategoriesAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        menuViewModel = ViewModelProviders.of(this).get(MenuViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_menu, container, false);
 
+        View root = inflater.inflate(R.layout.fragment_menu, container, false);
+        //<---------------
+        menuViewModel = ViewModelProviders.of(this).get(MenuViewModel.class); // <-- Datos de firebase
         unbinder = ButterKnife.bind(this, root);
         initView();
         menuViewModel.getMessageError().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                Toast.makeText(getContext(), "error:" +s, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "error:" + s, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
-
-        menuViewModel.getCategoryListMutable().observe(this,categoryModels -> {
+        menuViewModel.getCategoryListMutable().observe(this, categoryModels -> {
             dialog.dismiss();
-            adapter = new MyCategoriesAdapter(getContext(),categoryModels);
+            adapter = new MyCategoriesAdapter(getContext(), categoryModels);
             recyclerView_menu.setAdapter(adapter);
             recyclerView_menu.setLayoutAnimation(layoutAnimationController);
         });
-
+        //<---------------
         return root;
     }
 
@@ -70,6 +71,7 @@ public class MenuFragment extends Fragment {
         dialog.show();
 
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_item_from_left);
+
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {

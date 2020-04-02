@@ -19,16 +19,16 @@ import java.util.List;
 
 public class MenuViewModel extends ViewModel implements ICategoryCallbackListener {
 
-
+    //Variables
+    private ICategoryCallbackListener categoryCallbackListener;
     private MutableLiveData<List<CategoryModel>> categoryListMutable;
     private MutableLiveData<String> messageError = new MutableLiveData<>();
-    private ICategoryCallbackListener categoryCallbackListener;
 
-
+    //Constructor
     public MenuViewModel() {
         categoryCallbackListener = this;
     }
-
+    //metodos sobreecritos
 
     @Override
     public void onCategoryLoadSucess(List<CategoryModel> categoryModelsList) {
@@ -40,10 +40,8 @@ public class MenuViewModel extends ViewModel implements ICategoryCallbackListene
         messageError.setValue(message);
     }
 
-
+    //metodo de clase
     public MutableLiveData<List<CategoryModel>> getCategoryListMutable() {
-
-
         if (categoryListMutable == null) {
             categoryListMutable = new MutableLiveData<>();
             messageError = new MutableLiveData<>();
@@ -53,13 +51,19 @@ public class MenuViewModel extends ViewModel implements ICategoryCallbackListene
 
     }
 
+
+    public MutableLiveData<String> getMessageError() {
+        return messageError;
+    }
+    //metodo auxiliar - datos
     private void loadCategories() {
         List<CategoryModel> tempList = new ArrayList<>();
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_REF);
+        categoryRef.orderByKey();
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot x : dataSnapshot.getChildren()) {
+                for (DataSnapshot x : dataSnapshot.getChildren()) { //dataSnapshot.getChildren  <-- es una lista
                     CategoryModel categoryModel = x.getValue(CategoryModel.class);
                     categoryModel.setMenu_id(x.getKey());
                     tempList.add(categoryModel);
@@ -75,19 +79,6 @@ public class MenuViewModel extends ViewModel implements ICategoryCallbackListene
         });
     }
 
-    public MutableLiveData<String> getMessageError() {
-        return messageError;
-    }
-
-
-    public void setCategoryListMutable(MutableLiveData<List<CategoryModel>> categoryListMutable) {
-        this.categoryListMutable = categoryListMutable;
-    }
-
-
-    public void setMessageError(MutableLiveData<String> messageError) {
-        this.messageError = messageError;
-    }
 
 
 }
