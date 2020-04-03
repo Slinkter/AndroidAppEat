@@ -20,7 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class HomeActivity extends AppCompatActivity {
-
+    // 6.14
     private AppBarConfiguration mAppBarConfiguration;
     NavController navController ;
 
@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_menu, R.id.nav_food_list)
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_menu,R.id.nav_food_details ,R.id.nav_food_list)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -72,7 +72,15 @@ public class HomeActivity extends AppCompatActivity {
     public void onCategorySelected(CategoryClick event){
         if (event.isSuccess()){
             navController.navigate(R.id.nav_food_list);
-            Toast.makeText(this, "Click to : "+ event.getCategoryModel().getName(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void onFoodItemClick(CategoryClick event){
+        if (event.isSuccess()){
+            navController.navigate(R.id.nav_food_details);
+
         }
     }
 
