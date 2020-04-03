@@ -1,5 +1,6 @@
 package com.cudpast.myeatapp.Commom;
 
+import com.cudpast.myeatapp.Model.CategoryModel;
 import com.cudpast.myeatapp.Model.UserModel;
 
 public class Common {
@@ -16,4 +17,5 @@ public class Common {
 
 
     public static UserModel currentUser;
+    public static CategoryModel categorySelected;
 }

@@ -11,9 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.cudpast.myeatapp.Callback.IRecyclerClickListener;
 import com.cudpast.myeatapp.Commom.Common;
+import com.cudpast.myeatapp.EventBus.CategoryClick;
 import com.cudpast.myeatapp.Model.CategoryModel;
 import com.cudpast.myeatapp.R;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -27,7 +31,6 @@ public class MyCategoriesAdapter extends RecyclerView.Adapter<MyCategoriesAdapte
     Context context;
     List<CategoryModel> categoryModelList;
 
-
     public MyCategoriesAdapter(Context context, List<CategoryModel> categoryModelList) {
         this.context = context;
         this.categoryModelList = categoryModelList;
@@ -36,14 +39,22 @@ public class MyCategoriesAdapter extends RecyclerView.Adapter<MyCategoriesAdapte
     @NonNull
     @Override
     public MyCategoriesAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_category_item,parent,false));
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_category_item, parent, false));
 
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyCategoriesAdapter.MyViewHolder holder, int position) {
         Glide.with(context).load(categoryModelList.get(position).getImage()).into(holder.category_image);
-        holder.category_name.setText(new StringBuffer( categoryModelList.get(position).getName()));
+        holder.category_name.setText(new StringBuffer(categoryModelList.get(position).getName()));
+        // Event
+        holder.setListener(new IRecyclerClickListener() {
+            @Override
+            public void onItemClickListener(View view, int pos) {
+                Common.categorySelected = categoryModelList.get(pos);
+                EventBus.getDefault().postSticky(new CategoryClick(true, categoryModelList.get(pos)));
+            }
+        });
 
     }
 
@@ -56,19 +67,19 @@ public class MyCategoriesAdapter extends RecyclerView.Adapter<MyCategoriesAdapte
 
     @Override
     public int getItemViewType(int position) {
-        if (categoryModelList.size() ==1){
+        if (categoryModelList.size() == 1) {
             return Common.DEFAULT_COLUMN_COUNT;
-        }else {
-            if (categoryModelList.size() % 2 ==0){
+        } else {
+            if (categoryModelList.size() % 2 == 0) {
                 return Common.DEFAULT_COLUMN_COUNT;
-            }else{
-                return (position>1 && position == categoryModelList.size() -1 ) ? Common.FULL_WIDTH_COLUMN:Common.DEFAULT_COLUMN_COUNT;
+            } else {
+                return (position > 1 && position == categoryModelList.size() - 1) ? Common.FULL_WIDTH_COLUMN : Common.DEFAULT_COLUMN_COUNT;
             }
         }
 
     }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    //Clase auxiliar
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         Unbinder unbinder;
         @BindView(R.id.img_category)
@@ -76,10 +87,21 @@ public class MyCategoriesAdapter extends RecyclerView.Adapter<MyCategoriesAdapte
         @BindView(R.id.txt_categoty)
         TextView category_name;
 
+        IRecyclerClickListener listener;
+
+        public void setListener(IRecyclerClickListener listener) {
+            this.listener = listener;
+        }
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            unbinder = ButterKnife.bind(this,itemView);
+            unbinder = ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onItemClickListener(v, getAdapterPosition());
         }
     }
 }
