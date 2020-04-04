@@ -48,12 +48,9 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
         holder.txt_food_price.setText(new StringBuffer("$").append(foodModelList.get(position).getPrice()));
         holder.txt_food_name.setText(new StringBuffer("").append(foodModelList.get(position).getName()));
 
-        holder.setListener(new IRecyclerClickListener() {
-            @Override
-            public void onItemClickListener(View view, int pos) {
-                Common.selectedFood = foodModelList.get(pos);
-                EventBus.getDefault().postSticky(new FoodItemClick(true,foodModelList.get(pos)));
-            }
+        holder.setListener((view, pos) -> {
+            Common.selectedFood = foodModelList.get(pos);
+            EventBus.getDefault().postSticky(new FoodItemClick(true,foodModelList.get(pos)));
         });
     }
 

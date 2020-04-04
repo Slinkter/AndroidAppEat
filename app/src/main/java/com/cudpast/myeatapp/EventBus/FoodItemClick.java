@@ -7,8 +7,6 @@ public class FoodItemClick {
     private  boolean success;
     private FoodModel foodModel;
 
-    public FoodItemClick() {
-    }
 
     public FoodItemClick(boolean success, FoodModel foodModel) {
         this.success = success;

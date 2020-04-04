@@ -23,8 +23,7 @@ public class FoodDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.food_details_fragment, container, false);
     }
 
@@ -32,7 +31,7 @@ public class FoodDetailsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(FoodDetailsViewModel.class);
-        // TODO: Use the ViewModel
+
     }
 
 }

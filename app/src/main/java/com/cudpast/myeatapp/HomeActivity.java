@@ -5,6 +5,7 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.cudpast.myeatapp.EventBus.CategoryClick;
+import com.cudpast.myeatapp.EventBus.FoodItemClick;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -77,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void onFoodItemClick(CategoryClick event){
+    public void onFoodItemClick(FoodItemClick event){
         if (event.isSuccess()){
             navController.navigate(R.id.nav_food_details);
 
