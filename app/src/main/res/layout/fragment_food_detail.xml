@@ -121,6 +121,7 @@
                     </LinearLayout>
 
                     <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+                        android:id="@+id/number_button"
                         android:layout_width="100dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="8dp"
