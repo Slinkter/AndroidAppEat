@@ -3,6 +3,7 @@ package com.cudpast.myeatapp.Model;
 import java.util.List;
 
 public class FoodModel {
+
     private String key;
     private String name, image, id, description;
     private Long price;
@@ -10,7 +11,6 @@ public class FoodModel {
     private List<SizeModel> size;
     private Double ratingValue;
     private Long ratingCount;
-
 
     public FoodModel() {
 

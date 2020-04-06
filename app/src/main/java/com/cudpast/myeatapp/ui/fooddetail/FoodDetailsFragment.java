@@ -29,12 +29,14 @@ import com.cudpast.myeatapp.Commom.Common;
 import com.cudpast.myeatapp.Model.CommentModel;
 import com.cudpast.myeatapp.Model.FoodModel;
 import com.cudpast.myeatapp.R;
+import com.cudpast.myeatapp.ui.comments.CommentFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -71,15 +73,21 @@ public class FoodDetailsFragment extends Fragment {
     @BindView(R.id.btnShowComment)
     Button btnShowCommnet;
 
-
     @OnClick(R.id.btn_rating)
     void onRatingButtonClick() {
         showDialogRating();
     }
 
+    @OnClick(R.id.btnShowComment)
+    void onShowCommentButtonClick(){
+        CommentFragment commentFragment = CommentFragment.getInstance();
+        commentFragment.show(getActivity().getSupportFragmentManager(),"CommentFragment");
+
+    }
+
+
     private void showDialogRating() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
-
         builder.setTitle("Rating Food ");
         builder.setMessage("Please fill information");
         View itemView = LayoutInflater.from(getContext()).inflate(R.layout.layout_rating, null);
@@ -93,29 +101,21 @@ public class FoodDetailsFragment extends Fragment {
             }
         });
 
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                CommentModel commentModel = new CommentModel();
-                commentModel.setName(Common.currentUser.getName());
-                commentModel.setUid(Common.currentUser.getUid());
-                commentModel.setComment(edt_comment.getText().toString());
-                commentModel.setRatingValue(ratingBar.getRating());
-                Map<String, Object> serverTimeStamp = new HashMap<>();
-                commentModel.setCommentTimeStamp(serverTimeStamp);
-
-
-                mViewModel.setCommentModel(commentModel);
-
-
-            }
+        builder.setPositiveButton("ok", (dialog, which) -> {
+            CommentModel commentModel = new CommentModel();
+            commentModel.setName(Common.currentUser.getName());
+            commentModel.setUid(Common.currentUser.getUid());
+            commentModel.setComment(edt_comment.getText().toString());
+            commentModel.setRatingValue(ratingBar.getRating());
+            Map<String, Object> serverTimeStamp = new HashMap<>();
+            serverTimeStamp.put("timeStamp", ServerValue.TIMESTAMP);
+            commentModel.setCommentTimeStamp(serverTimeStamp);
+            mViewModel.setCommentModel(commentModel);
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
-
 
     public static FoodDetailsFragment newInstance() {
         return new FoodDetailsFragment();
@@ -123,7 +123,7 @@ public class FoodDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        //
         View root = inflater.inflate(R.layout.fragment_food_detail, container, false);
         unbinder = ButterKnife.bind(this, root);
         initViews();
@@ -134,18 +134,15 @@ public class FoodDetailsFragment extends Fragment {
                 displayInfo(foodModel);
             }
         });
-
         mViewModel.getMutableLiveDataComment().observe(this, commentModel -> {
             submitRatingToFirabase(commentModel);
         });
-
+        //
         return root;
     }
 
     private void initViews() {
         waitingDialog = new SpotsDialog.Builder().setCancelable(false).setContext(getContext()).build();
-
-
     }
 
     private void submitRatingToFirabase(CommentModel commentModel) {
@@ -156,16 +153,12 @@ public class FoodDetailsFragment extends Fragment {
                 .child(Common.selectedFood.getId())
                 .push()
                 .setValue(commentModel)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            addRatingToFood(commentModel.getRatingValue());
-                        }
-                        waitingDialog.dismiss();
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        addRatingToFood(commentModel.getRatingValue());
                     }
+                    waitingDialog.dismiss();
                 });
-
     }
 
     private void addRatingToFood(float ratingValue) {
@@ -182,7 +175,6 @@ public class FoodDetailsFragment extends Fragment {
                             FoodModel foodModel = dataSnapshot.getValue(FoodModel.class);
                             foodModel.setKey(Common.selectedFood.getKey());
 
-
                             if (foodModel.getRatingValue() == null) {
                                 foodModel.setRatingValue(0d);
                             }
@@ -190,7 +182,6 @@ public class FoodDetailsFragment extends Fragment {
                             if (foodModel.getRatingCount() == null) {
                                 foodModel.setRatingCount(0l);
                             }
-
 
                             double sumRating = foodModel.getRatingValue() + ratingValue;
                             long ratingCount = foodModel.getRatingCount() + 1;
@@ -203,7 +194,6 @@ public class FoodDetailsFragment extends Fragment {
                             //Update data in variable
                             foodModel.setRatingValue(result);
                             foodModel.setRatingCount(ratingCount);
-
 
                             dataSnapshot
                                     .getRef()
@@ -219,8 +209,6 @@ public class FoodDetailsFragment extends Fragment {
                                             }
                                         }
                                     });
-
-
                         } else {
 
                         }
@@ -240,16 +228,11 @@ public class FoodDetailsFragment extends Fragment {
         food_description.setText(new StringBuilder(foodModel.getDescription()));
         food_price.setText(new StringBuilder(foodModel.getPrice().toString()));
 
-        if (foodModel.getRatingCount() != null){
+        if (foodModel.getRatingCount() != null) {
             ratingBar.setRating(foodModel.getRatingCount().floatValue());
         }
-
-
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(Common.selectedFood.getName());
-
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

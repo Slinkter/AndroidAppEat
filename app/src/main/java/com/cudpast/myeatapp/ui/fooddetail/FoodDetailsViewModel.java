@@ -13,8 +13,6 @@ public class FoodDetailsViewModel extends ViewModel {
     private MutableLiveData<FoodModel> mutableLiveDataFood;
     private MutableLiveData<CommentModel> mutableLiveDataComment;
 
-
-
     public FoodDetailsViewModel() {
         mutableLiveDataComment = new MutableLiveData<>();
     }

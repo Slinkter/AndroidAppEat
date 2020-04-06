@@ -1,4 +1,8 @@
 package com.cudpast.myeatapp.Fragments;
 
-public class CommentFragmentDialog {
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+public class CommentFragmentDialog extends BottomSheetDialogFragment {
+
+
 }
