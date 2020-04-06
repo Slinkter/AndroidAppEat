@@ -36,6 +36,8 @@ import dmax.dialog.SpotsDialog;
 
 public class CommentFragment extends BottomSheetDialogFragment implements ICommentCallbackListener {
 
+    // No refresh cuando hace la puntuacion
+
     private CommentViewModel commentViewModel;
     private Unbinder unbinder;
 
