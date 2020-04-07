@@ -24,19 +24,16 @@ import butterknife.Unbinder;
 
 public class HomeFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    public HomeViewModel homeViewModel;
+    public LayoutAnimationController layoutAnimationController;
     public Unbinder unbinder;
-
+    //
     @BindView(R.id.recycler_popular)
     RecyclerView recyclerView_popular;
-
     @BindView(R.id.viewpager)
-    LoopingViewPager viewPager;
-
-    LayoutAnimationController layoutAnimationController;
+    LoopingViewPager loopViewPager;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this, root);
         initRecyclerView();
@@ -50,13 +47,12 @@ public class HomeFragment extends Fragment {
         // 2
         homeViewModel.getBestDealList().observe(this, bestDealModels -> {
             MyBestDealsAdapter adapter = new MyBestDealsAdapter(getContext(), bestDealModels, true);
-            viewPager.setAdapter(adapter);
+            loopViewPager.setAdapter(adapter);
         });
         return root;
     }
 
     private void initRecyclerView() {
-
         layoutAnimationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_item_from_left);
         recyclerView_popular.setHasFixedSize(true);
         recyclerView_popular.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
@@ -65,12 +61,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        viewPager.resumeAutoScroll();
+        loopViewPager.resumeAutoScroll();
     }
 
     @Override
     public void onPause() {
-        viewPager.pauseAutoScroll();
+        loopViewPager.pauseAutoScroll();
         super.onPause();
     }
 }

@@ -30,27 +30,27 @@ import butterknife.Unbinder;
 
 public class FoodListFragment extends Fragment {
 
-    private FoodListViewModel foodListViewModel;
 
-    Unbinder unbinder;
     @BindView(R.id.recycler_food_list)
     RecyclerView recycler_food_list;
 
-
+    FoodListViewModel foodListViewModel;
+    Unbinder unbinder;
     LayoutAnimationController layoutAnimationController;
     MyFoodListAdapter adapter;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        foodListViewModel = ViewModelProviders.of(this).get(FoodListViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_food_list, container, false);
+        foodListViewModel = ViewModelProviders.of(this).get(FoodListViewModel.class);
         unbinder = ButterKnife.bind(this, root);
         initViews();
 
         foodListViewModel.getMutableLiveDataFoodList().observe(this, new Observer<List<FoodModel>>() {
             @Override
             public void onChanged(List<FoodModel> foodModels) {
-                adapter = new MyFoodListAdapter(getContext(),foodModels);
+                adapter = new MyFoodListAdapter(getContext(), foodModels);
                 recycler_food_list.setAdapter(adapter);
                 recycler_food_list.setLayoutAnimation(layoutAnimationController);
             }

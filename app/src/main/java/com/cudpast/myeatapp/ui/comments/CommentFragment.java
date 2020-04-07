@@ -58,7 +58,6 @@ public class CommentFragment extends BottomSheetDialogFragment implements IComme
         if (instance == null) {
             instance = new CommentFragment();
         }
-
         return instance;
     }
 

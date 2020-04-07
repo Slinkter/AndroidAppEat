@@ -58,9 +58,7 @@
                 app:autoScroll="true"
                 app:isInfinite="true"
                 app:scrollInterval="5000"
-                app:viewpagerAspectRatio="1.33">
-
-            </com.asksira.loopingviewpager.LoopingViewPager>
+                app:viewpagerAspectRatio="1.33"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

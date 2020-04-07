@@ -20,18 +20,13 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 
-public class MyBestDealsAdapter  extends LoopingPagerAdapter<BestDealModel> {
-
+public class MyBestDealsAdapter extends LoopingPagerAdapter<BestDealModel> {
 
     @BindView(R.id.img_best_deal)
     ImageView img_best_deal;
     @BindView(R.id.txt_best_deal)
     TextView txt_best_deal;
-
-
     Unbinder unbinder;
-
-
 
     public MyBestDealsAdapter(Context context, List<BestDealModel> itemList, boolean isInfinite) {
         super(context, itemList, isInfinite);
@@ -39,14 +34,17 @@ public class MyBestDealsAdapter  extends LoopingPagerAdapter<BestDealModel> {
 
     @Override
     protected View inflateView(int viewType, ViewGroup container, int listPosition) {
-        return LayoutInflater.from(context).inflate(R.layout.layout_best_deal_item,container,false);
+        return LayoutInflater.from(context).inflate(R.layout.layout_best_deal_item, container, false);
     }
 
     @Override
-    protected void bindView(View convertView, int listPosition, int viewType) {
-        unbinder = ButterKnife.bind(this,convertView);
-        //set data
-        Glide.with(convertView).load(itemList.get(listPosition).getImage()).into(img_best_deal);
+    protected void bindView(View view, int listPosition, int viewType) {
+        unbinder = ButterKnife.bind(this, view);
+        Glide
+                .with(view)
+                .load(itemList.get(listPosition).getImage())
+                .into(img_best_deal);
+
         txt_best_deal.setText(itemList.get(listPosition).getName());
     }
 }

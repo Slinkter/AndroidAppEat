@@ -16,8 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,10 +32,13 @@ import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.cudpast.myeatapp.Commom.Common;
 import com.cudpast.myeatapp.Model.CommentModel;
 import com.cudpast.myeatapp.Model.FoodModel;
+import com.cudpast.myeatapp.Model.SizeModel;
 import com.cudpast.myeatapp.R;
 import com.cudpast.myeatapp.ui.comments.CommentFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +60,8 @@ public class FoodDetailsFragment extends Fragment {
     private FoodDetailsViewModel mViewModel;
     public Unbinder unbinder;
     private android.app.AlertDialog waitingDialog;
+    private BottomSheetDialog addonBottomSheetDialog;
+
 
     @BindView(R.id.img_food)
     ImageView img_food;
@@ -72,6 +81,14 @@ public class FoodDetailsFragment extends Fragment {
     RatingBar ratingBar;
     @BindView(R.id.btnShowComment)
     Button btnShowCommnet;
+    @BindView(R.id.rdi_group_size)
+    RadioGroup rdi_group_size;
+    @BindView(R.id.img_add_addon)
+    ImageView img_add_addon;
+    @BindView(R.id.chip_group_user_selected)
+    ChipGroup chip_group_user_selected;
+
+
 
     @OnClick(R.id.btn_rating)
     void onRatingButtonClick() {
@@ -143,6 +160,9 @@ public class FoodDetailsFragment extends Fragment {
 
     private void initViews() {
         waitingDialog = new SpotsDialog.Builder().setCancelable(false).setContext(getContext()).build();
+        addonBottomSheetDialog = new BottomSheetDialog(getContext(),R.style.DialogStyle);
+        View layout_addon_display = getLayoutInflater().inflate(R.layout.layout_addon_display,null);
+
     }
 
     private void submitRatingToFirabase(CommentModel commentModel) {
@@ -232,13 +252,45 @@ public class FoodDetailsFragment extends Fragment {
             ratingBar.setRating(foodModel.getRatingCount().floatValue());
         }
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(Common.selectedFood.getName());
+
+        for (SizeModel sizeModel : Common.selectedFood.getSize()){
+            RadioButton radioButton =  new RadioButton(getContext());
+            radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked){
+                        Common.selectedFood.setUserSelectedSize(sizeModel);
+                        calculateToTotalPrice();
+                    }
+                }
+            });
+
+            LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT,1.0f);
+            radioButton.setLayoutParams(params);
+            radioButton.setText(sizeModel.getName());
+            radioButton.setTag(sizeModel.getPrice());
+            rdi_group_size.addView(radioButton);
+        }
+
+        if (rdi_group_size.getChildCount()>0){
+            RadioButton radioButton = (RadioButton) rdi_group_size.getChildAt(0);
+            radioButton.setChecked(true);
+        }
+        calculateToTotalPrice();
+    }
+
+    private void calculateToTotalPrice() {
+        double totalPrice = Double.parseDouble(Common.selectedFood.getPrice().toString()),displayPrice = 0.0;
+        totalPrice += Double.parseDouble(Common.selectedFood.getUserSelectedSize().getPrice().toString());
+        displayPrice = totalPrice *(Integer.parseInt(numberButton.getNumber()));
+        displayPrice = Math.round(displayPrice*100.0/100.0);
+        food_price.setText(new StringBuilder("").append(Common.formatPrice(displayPrice)).toString());
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(FoodDetailsViewModel.class);
-
     }
 
 }

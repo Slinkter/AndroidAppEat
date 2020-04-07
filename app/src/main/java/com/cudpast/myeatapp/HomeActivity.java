@@ -22,25 +22,30 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class HomeActivity extends AppCompatActivity {
     // 6.14
-    private AppBarConfiguration mAppBarConfiguration;
-    NavController navController ;
+    AppBarConfiguration mAppBarConfiguration;
+    NavController navController;
+    NavigationView navigationView;
+    DrawerLayout drawer;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_menu,R.id.nav_food_details ,R.id.nav_food_list)
-                .setDrawerLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        //
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home,
+                R.id.nav_menu,
+                R.id.nav_food_details,
+                R.id.nav_food_list)
+                .setDrawerLayout(drawer).build();
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
     }
 
     @Override
@@ -51,8 +56,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
@@ -60,7 +64,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-
     }
 
     @Override
@@ -69,22 +72,18 @@ public class HomeActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void onCategorySelected(CategoryClick event){
-        if (event.isSuccess()){
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onCategoryClick(CategoryClick event) {
+        if (event.isSuccess()) {
             navController.navigate(R.id.nav_food_list);
-
         }
     }
 
-    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
-    public void onFoodItemClick(FoodItemClick event){
-        if (event.isSuccess()){
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onFoodItemClick(FoodItemClick event) {
+        if (event.isSuccess()) {
             navController.navigate(R.id.nav_food_details);
-
         }
     }
-
-
 
 }
