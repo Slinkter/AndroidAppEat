@@ -2,7 +2,6 @@ package com.cudpast.myeatapp.ui.fooddetail;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.DialogInterface;
@@ -62,7 +61,7 @@ import dmax.dialog.SpotsDialog;
 
 public class FoodDetailsFragment extends Fragment implements TextWatcher {
 
-    private FoodDetailsViewModel mViewModel;
+    private FoodDetailsViewModel foodDetailViewModel;
     public Unbinder unbinder;
     private android.app.AlertDialog waitingDialog;
     private BottomSheetDialog addonBottomSheetDialog;
@@ -95,7 +94,7 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
     @BindView(R.id.img_add_addon)
     ImageView img_add_addon;
     @BindView(R.id.chip_group_user_selected)
-    ChipGroup chip_group_user_selected;
+    ChipGroup chip_group_user_selected_addon;
 
     @OnClick(R.id.img_add_addon)
     void onAddonClick() {
@@ -103,6 +102,19 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
             displayAddonList();
             addonBottomSheetDialog.show();
         }
+    }
+
+
+    @OnClick(R.id.btn_rating)
+    void onRatingButtonClick() {
+        showDialogRating();
+    }
+
+    @OnClick(R.id.btnShowComment)
+    void onShowCommentButtonClick() {
+        CommentFragment commentFragment = CommentFragment.getInstance();
+        commentFragment.show(getActivity().getSupportFragmentManager(), "CommentFragment");
+
     }
 
     private void displayAddonList() {
@@ -130,18 +142,6 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
         }
     }
 
-    @OnClick(R.id.btn_rating)
-    void onRatingButtonClick() {
-        showDialogRating();
-    }
-
-    @OnClick(R.id.btnShowComment)
-    void onShowCommentButtonClick() {
-        CommentFragment commentFragment = CommentFragment.getInstance();
-        commentFragment.show(getActivity().getSupportFragmentManager(), "CommentFragment");
-
-    }
-
 
     private void showDialogRating() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getContext());
@@ -167,7 +167,7 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
             Map<String, Object> serverTimeStamp = new HashMap<>();
             serverTimeStamp.put("timeStamp", ServerValue.TIMESTAMP);
             commentModel.setCommentTimeStamp(serverTimeStamp);
-            mViewModel.setCommentModel(commentModel);
+            foodDetailViewModel.setCommentModel(commentModel);
         });
 
         AlertDialog dialog = builder.create();
@@ -181,17 +181,12 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //
+        foodDetailViewModel = ViewModelProviders.of(this).get(FoodDetailsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_food_detail, container, false);
         unbinder = ButterKnife.bind(this, root);
         initViews();
-        mViewModel = ViewModelProviders.of(this).get(FoodDetailsViewModel.class);
-        mViewModel.getMutableLiveDataFood().observe(this, new Observer<FoodModel>() {
-            @Override
-            public void onChanged(FoodModel foodModel) {
-                displayInfo(foodModel);
-            }
-        });
-        mViewModel.getMutableLiveDataComment().observe(this, commentModel -> {
+        foodDetailViewModel.getMutableLiveDataFood().observe(this, foodModel -> displayInfo(foodModel));
+        foodDetailViewModel.getMutableLiveDataComment().observe(this, commentModel -> {
             submitRatingToFirabase(commentModel);
         });
         //
@@ -200,46 +195,45 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
 
     private void initViews() {
         waitingDialog = new SpotsDialog.Builder().setCancelable(false).setContext(getContext()).build();
-        addonBottomSheetDialog = new BottomSheetDialog(getContext(), R.style.DialogStyle);
+        //
         View layout_addon_display = getLayoutInflater().inflate(R.layout.layout_addon_display, null);
         chip_group_addon = (ChipGroup) layout_addon_display.findViewById(R.id.chip_group_addon);
         edt_search = (EditText) layout_addon_display.findViewById(R.id.edt_search);
+        //
+        addonBottomSheetDialog = new BottomSheetDialog(getContext(), R.style.DialogStyle);
         addonBottomSheetDialog.setContentView(layout_addon_display);
 
-        addonBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                displayUserSelectAddon();
-
-                calculateToTotalPrice();
-            }
+        addonBottomSheetDialog.setOnDismissListener(dialog -> {
+            displayUserSelectAddon();
+            calculateToTotalPrice();
         });
 
     }
 
     private void displayUserSelectAddon() {
-        if (Common.selectedFood.getUserSelectedAddon() != null && Common.selectedFood.getUserSelectedAddon().size() > 0) {
-            chip_group_user_selected.removeAllViews();
+        if (Common.selectedFood.getUserSelectedAddon() != null &&
+                Common.selectedFood.getUserSelectedAddon().size() > 0) {
+
+            chip_group_user_selected_addon.removeAllViews();
             for (AddonModel addonModel : Common.selectedFood.getUserSelectedAddon()) {
                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.layout_chip_with_delete_icon, null);
-                chip.setText(new StringBuilder(addonModel.getName()).append("(+$").append(addonModel.getPrice()).append(")"));
+                chip.setText(new StringBuilder(addonModel.getName()).append("(+$")
+                        .append(addonModel.getPrice()).append(")"));
                 chip.setClickable(false);
-                chip.setOnCloseIconClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        chip_group_user_selected.removeView(v);
-                        Common.selectedFood.getUserSelectedAddon().remove(addonModel);
-                        calculateToTotalPrice();
-                    }
+                chip.setOnCloseIconClickListener(view -> {
+                    chip_group_user_selected_addon.removeView(view);
+                    Common.selectedFood.getUserSelectedAddon().remove(addonModel);
+                    calculateToTotalPrice();
                 });
 
-                chip_group_user_selected.addView(chip);
+                chip_group_user_selected_addon.addView(chip);
 
             }
         } else if (Common.selectedFood.getUserSelectedAddon().size() == 0) {
-            chip_group_user_selected.removeAllViews();
+            chip_group_user_selected_addon.removeAllViews();
         }
     }
+
 
     private void submitRatingToFirabase(CommentModel commentModel) {
         waitingDialog.show();
@@ -301,7 +295,7 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
                                             if (task.isSuccessful()) {
                                                 Toast.makeText(getContext(), "Thank you", Toast.LENGTH_SHORT).show();
                                                 Common.selectedFood = foodModel;
-                                                mViewModel.setFoodModel(foodModel);/// call refresh
+                                                foodDetailViewModel.setFoodModel(foodModel);/// call refresh
                                             }
                                         }
                                     });
@@ -357,14 +351,13 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
 
     private void calculateToTotalPrice() {
         double totalPrice = Double.parseDouble(Common.selectedFood.getPrice().toString()), displayPrice = 0.0;
-
+        // Addon
         if (Common.selectedFood.getUserSelectedAddon() != null && Common.selectedFood.getUserSelectedAddon().size() > 0) {
             for (AddonModel addonModel : Common.selectedFood.getUserSelectedAddon()) {
                 totalPrice += Double.parseDouble(addonModel.getPrice().toString());
             }
         }
-
-
+        //size
         totalPrice += Double.parseDouble(Common.selectedFood.getUserSelectedSize().getPrice().toString());
         displayPrice = totalPrice * (Integer.parseInt(numberButton.getNumber()));
         displayPrice = Math.round(displayPrice * 100.0 / 100.0);
@@ -374,25 +367,27 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(FoodDetailsViewModel.class);
+        foodDetailViewModel = ViewModelProviders.of(this).get(FoodDetailsViewModel.class);
     }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        //Nothing
     }
 
     @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
+    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
         chip_group_addon.clearCheck();
         chip_group_addon.removeAllViews();
 
         for (AddonModel addonModel : Common.selectedFood.getAddon()) {
-            if (addonModel.getName().toLowerCase().contains(s.toString().toLowerCase())) {
+            if (addonModel.getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
                 Chip chip = (Chip) getLayoutInflater().inflate(R.layout.layout_addon_item, null);
-                chip.setText(new StringBuilder(addonModel.getName()).append("(+$").append(addonModel.getPrice()).append(")"));
-                chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked) {
+                chip.setText(new StringBuilder(addonModel.getName()).append("(+$")
+                        .append(addonModel.getPrice()).append(")"));
+                chip.setOnCheckedChangeListener((compoundButton, b) -> {
+                    if (b) {
+
                         if (Common.selectedFood.getUserSelectedAddon() == null) {
                             Common.selectedFood.setUserSelectedAddon(new ArrayList<>());
                         }
@@ -408,6 +403,6 @@ public class FoodDetailsFragment extends Fragment implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-
+        //Nothing
     }
 }
