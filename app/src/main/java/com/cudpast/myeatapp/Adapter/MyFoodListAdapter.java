@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.cudpast.myeatapp.Callback.IRecyclerClickListener;
 import com.cudpast.myeatapp.Commom.Common;
+import com.cudpast.myeatapp.Database.CartItem;
 import com.cudpast.myeatapp.EventBus.FoodItemClick;
 import com.cudpast.myeatapp.Model.FoodModel;
 import com.cudpast.myeatapp.R;
@@ -47,12 +48,34 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
         Glide.with(context).load(foodModelList.get(position).getImage()).into(holder.img_food_image);
         holder.txt_food_price.setText(new StringBuffer("$").append(foodModelList.get(position).getPrice()));
         holder.txt_food_name.setText(new StringBuffer("").append(foodModelList.get(position).getName()));
-
+        //Event
         holder.setListener((view, pos) -> {
             Common.selectedFood = foodModelList.get(pos);
             Common.selectedFood .setKey(String.valueOf(pos));
             EventBus.getDefault().postSticky(new FoodItemClick(true, foodModelList.get(pos)));
         });
+        //
+        holder.img_fav.setOnClickListener(v -> {
+
+            CartItem cartItem = new CartItem();
+            cartItem.setUid(Common.currentUser.getUid());
+            cartItem.setUserPhone(Common.currentUser.getPhone());
+
+            cartItem.setFoodId(foodModelList.get(position).getId());
+            cartItem.setFoodName(foodModelList.get(position).getName());
+            cartItem.setFoodImage(foodModelList.get(position).getImage());
+            cartItem.setFoodPrice(Double.valueOf(String.valueOf(foodModelList.get(position).getPrice())));
+            cartItem.setFoodQuantity(1);
+            cartItem.setFoodExtraPrice(0.0);//Because default
+            cartItem.setFoodAddon("Default");
+            cartItem.setFoodSize("Default");
+
+            //5:16
+
+        });
+
+
+
     }
 
     @Override
