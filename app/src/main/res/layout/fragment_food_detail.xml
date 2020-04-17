@@ -39,7 +39,6 @@
         app:pressedTranslationZ="12dp"
         app:useCompatPadding="true" />
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_rating"
         android:layout_width="wrap_content"
