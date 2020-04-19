@@ -16,10 +16,12 @@ public interface CartDataSource {
 
     Flowable<List<CartItem>> getAllCart(String uid);
     Single<Integer> countItemInCart(String uid);
-    Single<Long> sumPriceInCart(String uid);
+    Single<Double> sumPriceInCart(String uid);
     Single<CartItem> getItemInCart(String foodId, String uid);
     Completable insertOrReplaceALL(CartItem... cartItems);
     Single<Integer> updateCartItems(CartItem cartItem);
     Single<Integer> deleteCartItem(CartItem cartItem);
     Single<Integer> cleanCart(String uid);
+
+    Single<CartItem> getItemWithAllOptionsInCart(String uid, String foodId, String foodSize, String foodAddon);
 }

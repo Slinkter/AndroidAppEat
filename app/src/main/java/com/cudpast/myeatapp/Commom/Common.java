@@ -1,11 +1,14 @@
 package com.cudpast.myeatapp.Commom;
 
+import com.cudpast.myeatapp.Model.AddonModel;
 import com.cudpast.myeatapp.Model.CategoryModel;
 import com.cudpast.myeatapp.Model.FoodModel;
+import com.cudpast.myeatapp.Model.SizeModel;
 import com.cudpast.myeatapp.Model.UserModel;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class Common {
 
@@ -33,6 +36,29 @@ public class Common {
             return finalPrice.replace(".", ",");
         } else {
             return "0,00";
+        }
+
+
+    }
+
+    public static Double calculateExtraPrice(SizeModel userSelectedSize, List<AddonModel> userSelectedAddon) {
+
+        Double result = 0.0;
+        if (userSelectedSize == null && userSelectedAddon == null){
+            return 0.0;
+        }else if ( userSelectedSize == null){
+            for (AddonModel addonModel:userSelectedAddon){
+                result+=addonModel.getPrice();
+            }
+            return result;
+        }else if (userSelectedAddon == null){
+            return userSelectedSize.getPrice()*1.0;
+        }else{
+            result = userSelectedSize.getPrice()*1.0;
+            for (AddonModel addonModel : userSelectedAddon){
+                result+=addonModel.getPrice();
+            }
+            return result;
         }
 
 

@@ -9,25 +9,7 @@
         android:id="@+id/nav_home"
         android:name="com.cudpast.myeatapp.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home">
-
-        <action
-            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
-            app:destination="@id/nav_home_second" />
-    </fragment>
-    <fragment
-        android:id="@+id/nav_home_second"
-        android:name="com.cudpast.myeatapp.ui.home.HomeSecondFragment"
-        android:label="@string/home_second"
-        tools:layout="@layout/fragment_home_second">
-        <action
-            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
-            app:destination="@id/nav_home" />
-
-        <argument
-            android:name="myArg"
-            app:argType="string" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_menu"
@@ -36,15 +18,22 @@
         tools:layout="@layout/fragment_menu" />
 
     <fragment
+        android:id="@+id/nav_food_details"
+        android:name="com.cudpast.myeatapp.ui.fooddetail.FoodDetailsFragment"
+        android:label="@string/menu_food_detail"
+        tools:layout="@layout/fragment_food_detail" />
+
+    <fragment
+        android:id="@+id/nav_cart"
+        android:name="com.cudpast.myeatapp.ui.cart.CartFragment"
+        android:label="@string/Share"
+        tools:layout="@layout/fragment_cart" />
+
+    <fragment
         android:id="@+id/nav_food_list"
         android:name="com.cudpast.myeatapp.ui.foodlist.FoodListFragment"
         android:label="@string/menu_food_list"
         tools:layout="@layout/fragment_food_list" />
 
-    <fragment
-        android:id="@+id/nav_food_details"
-        android:name="com.cudpast.myeatapp.ui.fooddetail.FoodDetailsFragment"
-        android:label="@string/menu_food_detail"
-        tools:layout="@layout/fragment_food_detail" />
 
 </navigation>
