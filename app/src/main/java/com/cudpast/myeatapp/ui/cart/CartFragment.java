@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,27 +72,28 @@ public class CartFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         cartViewModel = ViewModelProviders.of(this).get(CartViewModel.class);
         View root = inflater.inflate(R.layout.fragment_cart, container, false);
         cartViewModel.initCartDataSource(getContext());
-        cartViewModel.getMutableLiveData().observe(this, new Observer<List<CartItem>>() {
-            @Override
-            public void onChanged(List<CartItem> cartItems) {
-                if (cartItems == null || cartItems.isEmpty()) {
-                    recycler_cart.setVisibility(View.GONE);
-                    group_place_holder.setVisibility(View.GONE);
-                    txt_empty_cart.setVisibility(View.VISIBLE);
-                } else {
-                    recycler_cart.setVisibility(View.VISIBLE);
-                    group_place_holder.setVisibility(View.VISIBLE);
-                    txt_empty_cart.setVisibility(View.GONE);
+        cartViewModel.getMutableLiveData().observe(this, cartItems -> {
 
-                    MyCartAdapter adapter = new MyCartAdapter(getContext(), cartItems);
-                    recycler_cart.setAdapter(adapter);
-                }
+            Log.e("TAG", cartItems.toString() );
+
+
+
+            if (cartItems == null || cartItems.isEmpty()) {
+                recycler_cart.setVisibility(View.GONE);
+                group_place_holder.setVisibility(View.GONE);
+                txt_empty_cart.setVisibility(View.VISIBLE);
+            } else {
+                recycler_cart.setVisibility(View.VISIBLE);
+                group_place_holder.setVisibility(View.VISIBLE);
+                txt_empty_cart.setVisibility(View.GONE);
+
+                MyCartAdapter adapter = new MyCartAdapter(getContext(), cartItems);
+                recycler_cart.setAdapter(adapter);
             }
         });
         unbinder = ButterKnife.bind(this, root);
