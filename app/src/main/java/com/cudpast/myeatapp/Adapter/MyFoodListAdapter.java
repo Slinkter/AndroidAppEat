@@ -76,7 +76,6 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
             CartItem cartItem = new CartItem();
             cartItem.setUid(Common.currentUser.getUid());
             cartItem.setUserPhone(Common.currentUser.getPhone());
-
             cartItem.setFoodId(foodModelList.get(position).getId());
             cartItem.setFoodName(foodModelList.get(position).getName());
             cartItem.setFoodImage(foodModelList.get(position).getImage());
@@ -102,32 +101,41 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
                         @Override
                         public void onSuccess(CartItem cartItemfromDB) {
                             if (cartItemfromDB.equals(cartItem)) {
-                                //al ready in datbase , just update
-                                cartItemfromDB.setFoodExtraPrice(cartItem.getFoodExtraPrice());
-                                cartItemfromDB.setFoodAddon(cartItem.getFoodAddon());
-                                cartItemfromDB.setFoodSize(cartItem.getFoodSize());
-                                cartItemfromDB.setFoodQuantity(cartItemfromDB.getFoodQuantity() + cartItem.getFoodQuantity());
+                                try {
 
-                                cartDataSource.updateCartItems(cartItemfromDB)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new SingleObserver<Integer>() {
-                                            @Override
-                                            public void onSubscribe(Disposable d) {
+                                    //al ready in datbase , just update
+                                    cartItemfromDB.setFoodExtraPrice(cartItem.getFoodExtraPrice());
+                                    cartItemfromDB.setFoodAddon(cartItem.getFoodAddon());
+                                    cartItemfromDB.setFoodSize(cartItem.getFoodSize());
+                                    cartItemfromDB.setFoodQuantity(cartItemfromDB.getFoodQuantity() + cartItem.getFoodQuantity());
 
-                                            }
 
-                                            @Override
-                                            public void onSuccess(Integer integer) {
-                                                Toast.makeText(context, "Update cart Success", Toast.LENGTH_SHORT).show();
-                                                EventBus.getDefault().postSticky(new CounterCartEvent(true));
-                                            }
+                                    cartDataSource.updateCartItems(cartItemfromDB)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new SingleObserver<Integer>() {
+                                                @Override
+                                                public void onSubscribe(Disposable d) {
 
-                                            @Override
-                                            public void onError(Throwable e) {
-                                                Toast.makeText(context, "[UPDATE CART]" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                                }
+
+                                                @Override
+                                                public void onSuccess(Integer integer) {
+                                                    Toast.makeText(context, "Update cart Success", Toast.LENGTH_SHORT).show();
+                                                    EventBus.getDefault().postSticky(new CounterCartEvent(true));
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable e) {
+                                                    Toast.makeText(context, "[UPDATE CART]" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
 
                             } else {
                                 // item not available in cart before , insert new
@@ -172,7 +180,7 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private Unbinder unbinder;
+        Unbinder unbinder;
         IRecyclerClickListener listener;
 
         @BindView(R.id.txt_food_name)
