@@ -20,4 +20,7 @@
     <string name="add_on">Addon</string>
     <string name="Share">Share</string>
     <string name="menu_cart">cart</string>
+
+    <string name="action_clear_cart">Clear Cart</string>
+
 </resources>

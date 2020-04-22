@@ -153,7 +153,11 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(HomeActivity.this, "[Count cart]" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (!e.getMessage().contains("query returned empty")){
+                            Toast.makeText(HomeActivity.this, "[Count cart]" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }else{
+                            fab.setCount(0);
+                        }
                     }
                 });
     }
